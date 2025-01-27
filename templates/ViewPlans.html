@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+<!-- Loading the static folder files -->
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+    }
+
+    .table tbody tr:hover {
+        background-color: #888888; /* Highlight row on hover */
+        color: #ffffff; /* Ensure text remains visible on hover */
+    }
+
+    .table-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Edit and Delete Button Styling */
+    .btn-custom {
+        border-radius: 25px;
+        font-weight: bold;
+        background-color: #333;
+        color: white;
+        padding: 8px 20px;
+        transition: all 0.3s ease-in-out;
+        text-align: center;
+        display: inline-block;
+        margin-right: 10px; /* Adds space between buttons */
+        text-decoration: none; /* Removes underline from links */
+    }
+
+    .btn-custom:hover {
+        background-color: #444; /* Slightly lighter black shade on hover */
+        color: white; /* Ensures text stays white on hover */
+        transform: scale(1.05); /* Button grows slightly on hover */
+        text-decoration: none; /* Prevents underline on hover */
+    }
+
+    /* Add New Plan Button Styling */
+    .btn-add-new-plan {
+        border-radius: 15px; /* Circular corners for the rectangular button */
+        background-color: black;
+        color: white;
+        padding: 10px 30px; /* Padding for the rectangular button */
+        transition: all 0.3s ease-in-out;
+        font-weight: bold;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    .btn-add-new-plan:hover {
+        background-color: #444; /* Slightly lighter black shade on hover */
+        transform: scale(1.05); /* Enlarges the button slightly on hover */
+        color: white; /* Ensures text stays white on hover */
+        text-decoration: none; /* Prevents underline on hover */
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="overlay"></div>
+<div class="container mt-5">
+    <div class="table-container">
+        <h2>Plan List</h2>
+        <div class="form-group mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search plans by name or description">
+        </div>
+        <table class="table table-striped table-bordered shadow-lg">
+            <thead class="table-dark">
+                <tr>
+                    <th>Plan ID</th>
+                    <th>Plan Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Duration (Months)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable">
+                {% for plan in plans %}
+                <tr>
+                    <td>{{ plan.plan_id }}</td>
+                    <td>{{ plan.plan_name }}</td>
+                    <td>{{ plan.description }}</td>
+                    <td>${{ plan.price }}</td>
+                    <td>{{ plan.duration_months }}</td>
+                    <td>
+                        <!-- Edit and Delete buttons next to each other -->
+                        <a href="{% url 'edit_plan' plan.plan_id %}" class="btn-custom btn-sm">Edit</a>
+                        <a href="{% url 'delete_plan' plan.plan_id %}" class="btn-custom btn-sm" onclick="return confirm('Are you sure you want to delete this plan?');">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No plans found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center mt-4">
+            <!-- Rectangular Add New Plan Button -->
+            <a href="{% url 'add_plan' %}" class="btn-add-new-plan">
+                Add New Plan
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchBar').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#resultsTable tr');
+
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>
+
+<script>
+    function adjustOverlayHeight() {
+        const overlay = document.querySelector('.overlay');
+        overlay.style.height = `${document.body.scrollHeight}px`;
+    }
+
+    // Adjust overlay height on page load and resize
+    window.onload = adjustOverlayHeight;
+    window.onresize = adjustOverlayHeight;
+</script>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+<!-- Loading the static folder files -->
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+    }
+
+    .table tbody tr:hover {
+        background-color: #888888; /* Highlight row on hover */
+        color: #ffffff; /* Ensure text remains visible on hover */
+    }
+
+    .table-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        font-weight: bold;
+        background-color: #333;
+        color: white;
+        padding: 8px 20px;
+        transition: all 0.3s ease-in-out;
+        display: inline-block;
+        margin-right: 10px;
+        text-decoration: none;
+    }
+
+    .btn-custom:hover {
+        background-color: #444;
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        border-radius: 25px;
+        padding: 10px;
+    }
+
+    .form-control:focus {
+        border-color: #444;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<div class="overlay"></div>
+<div class="container mt-5">
+    <div class="table-container">
+        <h2>Membership List</h2>
+        <div class="form-group mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search memberships by member name, plan, or status">
+        </div>
+        <table class="table table-striped table-bordered shadow-lg">
+            <thead class="table-dark">
+                <tr>
+                    <th>Membership ID</th>
+                    <th>Member Name</th>
+                    <th>Plan</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable">
+                {% for membership in memberships %}
+                <tr>
+                    <td>{{ membership.membership_id }}</td>
+                    <td>{{ membership.member.first_name }} {{ membership.member.last_name }}</td>
+                    <td>{{ membership.plan.plan_name }}</td>
+                    <td>{{ membership.start_date }}</td>
+                    <td>{{ membership.end_date }}</td>
+                    <td>{{ membership.status }}</td>
+                    <td>
+                        <a href="{% url 'edit_membership' membership.membership_id %}" class="btn-custom btn-sm">Edit</a>
+                        <a href="{% url 'delete_membership' membership.membership_id %}" class="btn-custom btn-sm" onclick="return confirm('Are you sure you want to delete this membership?');">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No memberships found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchBar').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#resultsTable tr');
+
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+
+            // Show or hide rows based on the search term
+            row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>
+
+<script>
+    function adjustOverlayHeight() {
+        const overlay = document.querySelector('.overlay');
+        overlay.style.height = `${document.body.scrollHeight}px`;
+    }
+
+    // Adjust overlay height on page load and resize
+    window.onload = adjustOverlayHeight;
+    window.onresize = adjustOverlayHeight;
+</script>
+
+{% endblock %}

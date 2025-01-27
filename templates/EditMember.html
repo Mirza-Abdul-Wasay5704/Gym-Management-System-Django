@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+<!-- Loading the static folder files -->
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+        color: #f1f1f1;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: -1;
+    }
+
+    .form-container {
+        background-color: rgba(25, 25, 25, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .form-header {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #f1f1f1;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #f1f1f1;
+    }
+
+    .form-control {
+        background-color: #333;
+        color: #f1f1f1;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .btn {
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #333;
+    }
+
+    .btn-warning:hover {
+        background-color: #d39e00;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        transform: scale(1.05);
+    }
+
+    h3 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #f1f1f1;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="overlay"></div>
+<div class="container mt-5">
+    <div class="form-container">
+        <h3>Edit Member</h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <!-- First Name -->
+            <div class="mb-3">
+                <label for="firstName" class="form-label">First Name:</label>
+                <input type="text" class="form-control" id="firstName" name="first_name" value="{{ member.first_name }}" placeholder="Enter first name" required>
+            </div>
+            <!-- Last Name -->
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Last Name:</label>
+                <input type="text" class="form-control" id="lastName" name="last_name" value="{{ member.last_name }}" placeholder="Enter last name" required>
+            </div>
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ member.email }}" placeholder="Enter email" required>
+            </div>
+            <!-- Phone -->
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone:</label>
+                <input type="text" class="form-control" id="phone" name="phone" value="{{ member.phone }}" placeholder="Enter phone number" required>
+            </div>
+            <!-- Address -->
+            <div class="mb-3">
+                <label for="address" class="form-label">Address:</label>
+                <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter address">{{ member.address }}</textarea>
+            </div>
+            <!-- Join Date -->
+            <div class="mb-3">
+                <label for="joinDate" class="form-label">Join Date:</label>
+                <input type="date" class="form-control" id="joinDate" name="join_date" value="{{ member.join_date }}" required>
+            </div>
+            <!-- Date of Birth -->
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date of Birth:</label>
+                <input type="date" class="form-control" id="dob" name="dob" value="{{ member.dob }}" required>
+            </div>
+            <!-- Status -->
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label>
+                <select class="form-control" id="status" name="status" required>
+                    <option value="Active" {% if member.status == "Active" %}selected{% endif %}>Active</option>
+                    <option value="Inactive" {% if member.status == "Inactive" %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-warning">Save Changes</button>
+                <a href="{% url 'view_members' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

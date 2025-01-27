@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+<!-- Loading the static folder files -->
+{% load static %}
+
+{% block title %}
+Payment Page
+{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+    }
+
+    .table tbody tr:hover {
+        background-color: #888888; /* Highlight row on hover */
+        color: #ffffff; /* Ensure text remains visible on hover */
+    }
+
+    .table-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Button Styling */
+    .btn-custom {
+        border-radius: 25px;
+        font-weight: bold;
+        padding: 8px 20px;
+        transition: all 0.3s ease-in-out;
+        text-align: center;
+        display: inline-block;
+        margin-right: 10px; /* Adds space between the Pay Now and Paid buttons */
+        text-decoration: none; /* Removes underline from links */
+    }
+
+    /* Unpaid Button (Bright) */
+    .btn-custom-unpaid {
+        background-color: #28a745; /* Green background for enabled */
+        color: white;
+    }
+
+    .btn-custom-unpaid:hover {
+        background-color: #218838; /* Darker green on hover */
+        color: white;
+        transform: scale(1.05); /* Button grows slightly on hover */
+    }
+
+    /* Paid Button (Disabled, Lighter) */
+    .btn-custom-paid {
+        background-color: #6c757d; /* Lighter gray background for disabled */
+        color: white;
+        cursor: not-allowed;
+    }
+
+    .btn-custom-paid:hover {
+        background-color: #6c757d; /* Same color on hover */
+        color: white;
+        transform: none; /* No scaling for disabled button */
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    /* Prevent underline on hover for buttons */
+    .btn-custom:hover {
+        text-decoration: none; /* Ensures no underline on hover */
+    }
+</style>
+
+<div class="overlay"></div>
+<div class="container mt-5">
+    <div class="table-container">
+        <h1>Payment Details</h1>
+
+        <!-- Search Bar -->
+        <div class="form-group mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search members, plans, payment status (e.g., Paid, Unpaid)">
+        </div>
+
+        <!-- Payment Table -->
+        <table class="table table-bordered table-striped shadow-lg">
+            <thead class="table-dark">
+                <tr>
+                    <th>Member Name</th>
+                    <th>Plan</th>
+                    <th>Plan Amount</th>
+                    <th>Additional Charges</th>
+                    <th>Total Amount</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable">
+                {% for data in payment_data %}
+                <tr>
+                    <td>{{ data.member_name }}</td>
+                    <td>{{ data.plan_name }}</td>
+                    <td>${{ data.plan_amount|floatformat:2 }}</td> <!-- Plan Amount -->
+                    <td>
+                        {% if data.payment_status == 'Unpaid' %}
+                            <form action="{% url 'process_payment' %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="member_id" value="{{ data.member_id }}">
+                                <input type="number" name="additional_charges" step="0.01" value="50.00" class="form-control" style="width: 100px;">
+                        {% else %}
+                            ${{ data.additional_charges }}
+                        {% endif %}
+                    </td>
+                    <td>${{ data.total_amount|floatformat:2 }}</td> <!-- Total Amount -->
+                    <td>{{ data.payment_status }}</td>
+                    <td>
+                        {% if data.payment_status == 'Unpaid' %}
+                            <button type="submit" class="btn-custom btn-custom-unpaid btn-sm">Pay Now</button>
+                            </form> <!-- Close form only if unpaid -->
+                        {% else %}
+                            <button class="btn-custom btn-custom-paid btn-sm" disabled>Paid</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchBar').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#resultsTable tr');
+
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            const isPaid = rowText.includes("paid"); // Check if "paid" is part of the row's text
+            const isUnpaid = rowText.includes("unpaid"); // Check if "unpaid" is part of the row's text
+
+            if (searchTerm === "paid") {
+                // Show rows with paid status if "paid" is searched
+                row.style.display = isPaid || rowText.includes(searchTerm) ? '' : 'none';
+            } else if (searchTerm === "unpaid") {
+                // Show rows with unpaid status if "unpaid" is searched
+                row.style.display = isUnpaid || rowText.includes(searchTerm) ? '' : 'none';
+            } else {
+                // Show rows matching the general search term
+                row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+            }
+        });
+    });
+</script>
+
+<script>
+    function adjustOverlayHeight() {
+        const overlay = document.querySelector('.overlay');
+        overlay.style.height = `${document.body.scrollHeight}px`;
+    }
+
+    // Adjust overlay height on page load and resize
+    window.onload = adjustOverlayHeight;
+    window.onresize = adjustOverlayHeight;
+</script>
+
+{% endblock %}

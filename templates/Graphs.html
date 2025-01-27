@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    body {
+        background-color: #222;
+        color: #ddd;
+    }
+
+    h1 {
+        color: #fff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin-top: 20px; /* Reduce margin above the heading */
+    }
+
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+        background-color: #444;
+        border-bottom: 2px solid #555;
+    }
+
+    .card-title {
+        color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+        background-color: #333;
+        border-top: 2px solid #555;
+    }
+
+    .img-fluid {
+        max-width: 90%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .container {
+        padding: 2px;
+        margin-top: 10px; /* Reduce gap between the navbar and container */
+    }
+</style>
+
+<div class="container mt-3">
+    <h1 class="text-center mb-4 text-light">Graphs and Insights</h1>
+
+    <!-- Plans Pie Chart -->
+    <div class="card mb-4 shadow-lg" style="background-color: #333; border: none;">
+        <div class="card-header" style="background-color: #444;">
+            <h3 class="card-title text-light">Plans Distribution Among Memberships</h3>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ pie_chart }}" alt="Plans Pie Chart" class="img-fluid">
+        </div>
+    </div>
+
+    <!-- Monthly Revenue Graph -->
+    <div class="card mb-4 shadow-lg" style="background-color: #333; border: none;">
+        <div class="card-header" style="background-color: #444;">
+            <h3 class="card-title text-light">Monthly Revenue</h3>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ bar_chart_revenue }}" alt="Monthly Revenue Graph" class="img-fluid">
+        </div>
+    </div>
+
+    <!-- Trainer Assignments Graph -->
+    <div class="card mb-4 shadow-lg" style="background-color: #333; border: none;">
+        <div class="card-header" style="background-color: #444;">
+            <h3 class="card-title text-light">Trainer Assignments</h3>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ bar_chart_trainers }}" alt="Trainer Assignments Graph" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+{% endblock %}

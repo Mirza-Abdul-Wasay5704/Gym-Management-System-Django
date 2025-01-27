@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-light mb-5">Contact the Developers</h1>
+
+    <div class="row">
+        <!-- Developer 1 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(145deg, #444, #333);">
+                <div class="card-body text-center text-light p-5">
+                    <h3 class="card-title mb-3 d-flex justify-content-center align-items-center">Developer 1: <span class="ml-2">Mirza Abdul Wasay</span></h3>
+                    <p><strong>Email:</strong> <a href="mailto:k224087@nu.edu.pk" class="text-info">k224087@nu.edu.pk</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer 2 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(145deg, #444, #333);">
+                <div class="card-body text-center text-light p-5">
+                    <h3 class="card-title mb-3 d-flex justify-content-center align-items-center">Developer 2: <span class="ml-2">Muneeb Ur Rehman</span></h3>
+                    <p><strong>Email:</strong> <a href="mailto:k224025@nu.edu.pk" class="text-info">k224025@nu.edu.pk</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-center text-light mb-5">Supervisors</h2>
+    
+    <div class="row">
+        <!-- Supervisor 1 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(145deg, #444, #333);">
+                <div class="card-body text-center text-light p-5">
+                    <h3 class="card-title mb-3 d-flex justify-content-center align-items-center">Supervisor: <span class="ml-2">Dr. Omer Qureshi</span></h3>
+                    <p><strong>Email:</strong> Not Available</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Supervisor 2 -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(145deg, #444, #333);">
+                <div class="card-body text-center text-light p-5">
+                    <h3 class="card-title mb-3 d-flex justify-content-center align-items-center">Supervisor: <span class="ml-2">Mr. Sameer Faisal</span></h3>
+                    <p><strong>Email:</strong> Not Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    body {
+        background-color: #222;
+        color: #ddd;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h1, h2 {
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .card {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-body {
+        background-color: #333;
+        border-radius: 10px;
+    }
+
+    .card-title {
+        color: #f8f9fa;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        white-space: nowrap;
+    }
+
+    .text-info {
+        color: #17a2b8;
+        text-decoration: none;
+    }
+
+    .text-info:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        padding: 2px;
+    }
+
+    .row {
+        display: flex;
+        justify-content: center;
+    }
+
+    .mb-5 {
+        margin-bottom: 3rem;
+    }
+
+    .ml-2 {
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}

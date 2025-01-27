@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+        color: #f1f1f1;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: -1;
+    }
+
+    .form-container {
+        background-color: rgba(25, 25, 25, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .form-header {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #f1f1f1;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #d1d1d1;
+    }
+
+    .form-control {
+        background-color: #333;
+        color: #f1f1f1;
+        border: 1px solid #555;
+        border-radius: 5px;
+        box-shadow: none;
+    }
+
+    .form-control:focus {
+        background-color: #444;
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Fix for select dropdown text visibility */
+    .form-control, .form-select {
+        color: #f1f1f1;
+        background-color: #333;
+    }
+
+    .form-select:focus {
+        background-color: #444;
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Align selected text to the left */
+    #member-input, #plan-input {
+        text-align: left; /* Align text to the left */
+    }
+
+    .btn {
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+        transform: scale(1.05);
+    }
+
+    .dropdown-container {
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+
+    #plan-dropdown, #member-dropdown {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dropdown-option {
+        padding: 10px;
+        cursor: pointer;
+        color: #333; /* Ensures text is visible */
+    }
+
+    .dropdown-option:hover {
+        background-color: #f0f0f0;
+        color: #007bff; /* Adds a color change when hovering */
+    }
+</style>
+
+<div class="overlay"></div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-container">
+                <div class="form-header">Assign Membership</div>
+                <form method="post" action="{% url 'assign_membership' %}">
+                    {% csrf_token %}
+                    <!-- Member Selection -->
+                    <div class="mb-3 dropdown-container">
+                        <label for="member_id" class="form-label">Select Member:</label>
+                        <input type="text" id="member-input" class="form-control" placeholder="Select Member" readonly>
+                        <input type="hidden" name="member_id" id="selected-member">
+                        <div id="member-dropdown">
+                            {% for member in members %}
+                                <div class="dropdown-option" data-value="{{ member.member_id }}">
+                                    {{ member.first_name }} {{ member.last_name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Plan Selection -->
+                    <div class="mb-3 dropdown-container">
+                        <label for="plan_id" class="form-label">Select Plan:</label>
+                        <input type="text" id="plan-input" class="form-control" placeholder="Select Plan" readonly>
+                        <input type="hidden" name="plan_id" id="selected-plan">
+                        <div id="plan-dropdown">
+                            {% for plan in plans %}
+                                <div class="dropdown-option" data-value="{{ plan.plan_id }}">
+                                    {{ plan.plan_name }} - ${{ plan.price }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Submit and Cancel Buttons -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Assign Membership</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const memberInput = document.getElementById("member-input");
+    const planInput = document.getElementById("plan-input");
+    const memberDropdown = document.getElementById("member-dropdown");
+    const planDropdown = document.getElementById("plan-dropdown");
+    const selectedMember = document.getElementById("selected-member");
+    const selectedPlan = document.getElementById("selected-plan");
+
+    // Show/hide dropdown on input click
+    memberInput.addEventListener("click", () => {
+        memberDropdown.style.display = memberDropdown.style.display === "block" ? "none" : "block";
+    });
+
+    planInput.addEventListener("click", () => {
+        planDropdown.style.display = planDropdown.style.display === "block" ? "none" : "block";
+    });
+
+    // Select member from dropdown
+    memberDropdown.addEventListener("click", (event) => {
+        if (event.target.classList.contains("dropdown-option")) {
+            memberInput.value = event.target.textContent;
+            selectedMember.value = event.target.dataset.value;
+            memberDropdown.style.display = "none";
+            memberInput.style.color = "black"; // Set selected text color to black
+        }
+    });
+
+    // Select plan from dropdown
+    planDropdown.addEventListener("click", (event) => {
+        if (event.target.classList.contains("dropdown-option")) {
+            planInput.value = event.target.textContent;
+            selectedPlan.value = event.target.dataset.value;
+            planDropdown.style.display = "none";
+            planInput.style.color = "black"; // Set selected text color to black
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (event) => {
+        if (!memberInput.contains(event.target) && !memberDropdown.contains(event.target)) {
+            memberDropdown.style.display = "none";
+        }
+        if (!planInput.contains(event.target) && !planDropdown.contains(event.target)) {
+            planDropdown.style.display = "none";
+        }
+    });
+</script>
+
+{% endblock %}

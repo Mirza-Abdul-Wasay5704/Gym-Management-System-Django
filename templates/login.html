@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading the static folder files -->
+    {% load static %}
+
+    <!-- CSS for bg img and styles -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url("{% static 'loginwallpaper2.jpg' %}"); /* Background image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #121212; /* Dark background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            animation: fadeInBody 1s ease-in-out;
+        }
+
+        /* Fade-in animation for the entire page */
+        @keyframes fadeInBody {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .login-form {
+            background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            padding: 40px 50px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Deep shadow for modern look */
+            width: 400px;
+            text-align: center;
+            backdrop-filter: blur(12px); /* Glass blur effect */
+            transition: backdrop-filter 1s ease, box-shadow 0.5s ease; /* Smooth transition for the glass effect */
+            animation: fadeInForm 1s ease-in-out; /* Fade-in effect for the form */
+        }
+
+        /* Fade-in animation for the form */
+        @keyframes fadeInForm {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-form h2 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .login-form form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-form input {
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1); /* Slightly lighter background for inputs */
+            color: #fff;
+            outline: none;
+            transition: border-color 0.3s ease, background-color 0.3s ease; /* Smooth transition on focus */
+        }
+
+        .login-form input:focus {
+            border-color: #888; /* Lighter border when focused */
+            background: rgba(255, 255, 255, 0.2); /* Brighter background when focused */
+        }
+
+        .login-form button {
+            padding: 14px;
+            background: linear-gradient(145deg, #333, #555); /* Subtle gradient for button */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .login-form button:hover {
+            background: linear-gradient(145deg, #555, #333); /* Invert gradient on hover */
+            transform: translateY(-2px); /* Slight lift effect on hover */
+        }
+
+        .login-form button:active {
+            transform: translateY(0); /* Reset lift effect on click */
+        }
+
+        .login-form .forgot-password {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #bbb;
+            text-decoration: none;
+        }
+
+        .login-form .forgot-password:hover {
+            color: #fff;
+        }
+    </style>
+
+    <title>Login</title>
+</head>
+<body>
+
+<div class="login-form">
+    <h2>LOGIN</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <a href="#" class="forgot-password">Forgot Password?</a>
+</div>
+
+</body>
+</html>

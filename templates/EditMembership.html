@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Existing styles */
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+        color: #f1f1f1;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: -1;
+    }
+
+    .form-container {
+        background-color: rgba(25, 25, 25, 0.9);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .form-label {
+        color: #f1f1f1;
+    }
+
+    .form-control {
+        background-color: #333;
+        color: #f1f1f1;
+        border: 1px solid #555;
+        border-radius: 5px;
+    }
+
+    .form-control:focus {
+        background-color: #444;
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .btn {
+        border-radius: 25px;
+        font-weight: bold;
+        padding: 5px 15px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #333;
+    }
+
+    .btn-warning:hover {
+        background-color: #d39e00;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        transform: scale(1.05);
+    }
+
+    h3 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #f1f1f1;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .dropdown-container {
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+
+    #plan-dropdown {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dropdown-option {
+        padding: 10px;
+        cursor: pointer;
+        color: #333; /* Ensures text is visible */
+    }
+
+    .dropdown-option:hover {
+        background-color: #f0f0f0;
+        color: #007bff; /* Adds a color change when hovering */
+    }
+</style>
+
+
+<div class="overlay"></div>
+<div class="container mt-5">
+    <div class="form-container">
+        <h3>Edit Membership</h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <!-- Plan -->
+            <div class="mb-3 dropdown-container">
+                <label for="plan" class="form-label">Plan:</label>
+                <input type="text" id="plan-input" class="form-control" placeholder="Select Plan" readonly>
+                <input type="hidden" name="plan" id="selected-plan">
+                <div id="plan-dropdown">
+                    {% for plan in plans %}
+                        <div class="dropdown-option" data-value="{{ plan.plan_id }}">
+                            {{ plan.plan_name }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Start Date -->
+            <div class="mb-3">
+                <label for="start_date" class="form-label">Start Date:</label>
+                <input type="date" class="form-control" id="start_date" name="start_date" value="{{ membership.start_date }}" required>
+            </div>
+            <!-- End Date -->
+            <div class="mb-3">
+                <label for="end_date" class="form-label">End Date:</label>
+                <input type="date" class="form-control" id="end_date" name="end_date" value="{{ membership.end_date }}" required>
+            </div>
+            <!-- Status -->
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label>
+                <select class="form-select" id="status" name="status" required>
+                    <option value="Active" {% if membership.status == "Active" %}selected{% endif %}>Active</option>
+                    <option value="Inactive" {% if membership.status == "Inactive" %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-warning">Save Changes</button>
+                <a href="{% url 'view_memberships' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const planInput = document.getElementById("plan-input");
+    const planDropdown = document.getElementById("plan-dropdown");
+    const selectedPlan = document.getElementById("selected-plan");
+
+    // Show/hide dropdown on input click
+    planInput.addEventListener("click", () => {
+        planDropdown.style.display = planDropdown.style.display === "block" ? "none" : "block";
+    });
+
+    // Select plan from dropdown
+    planDropdown.addEventListener("click", (event) => {
+        if (event.target.classList.contains("dropdown-option")) {
+            planInput.value = event.target.textContent;
+            selectedPlan.value = event.target.dataset.value;
+            planDropdown.style.display = "none";
+            planInput.style.color = "black"; // Set selected text color to black
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (event) => {
+        if (!planInput.contains(event.target) && !planDropdown.contains(event.target)) {
+            planDropdown.style.display = "none";
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+<!-- Loading the static folder files -->
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+    }
+
+    .table tbody tr:hover {
+        background-color: #888888; /* Highlight row on hover */
+        color: #ffffff; /* Ensure text remains visible on hover */
+    }
+
+    .table-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Edit and Delete Button Styling */
+    .btn-custom {
+        border-radius: 25px;
+        font-weight: bold;
+        background-color: #333;
+        color: white;
+        padding: 8px 20px;
+        transition: all 0.3s ease-in-out;
+        text-align: center;
+        display: inline-block;
+        margin-right: 10px; /* Adds space between the Edit and Delete buttons */
+        text-decoration: none; /* Removes underline from links */
+    }
+
+    .btn-custom:hover {
+        background-color: #444; /* Slightly lighter black shade on hover */
+        color: white; /* Ensures text stays white on hover */
+        transform: scale(1.05); /* Button grows slightly on hover */
+        text-decoration: none; /* Prevents underline on hover */
+    }
+
+    /* Add New Member Button Styling (Black and Circular Rectangle) */
+    .btn-add-new-member {
+        border-radius: 15px; /* Circular corners for the rectangular button */
+        background-color: black;
+        color: white;
+        padding: 10px 30px; /* Padding for the rectangular button */
+        transition: all 0.3s ease-in-out;
+        font-weight: bold;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    .btn-add-new-member:hover {
+        background-color: #444; /* Slightly lighter black shade on hover */
+        transform: scale(1.05); /* Enlarges the button slightly on hover */
+        color: white; /* Ensures text stays white on hover */
+        text-decoration: none; /* Prevents underline on hover */
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Prevent underline on hover for Edit and Delete buttons */
+    .btn-custom:hover {
+        text-decoration: none; /* Ensures no underline on hover */
+    }
+</style>
+
+
+
+
+
+<div class="overlay"></div>
+<div class="container mt-5">
+    <div class="table-container">
+        <h2>Member List</h2>
+        <div class="form-group mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search members by name, email, or phone">
+        </div>
+        <table class="table table-striped table-bordered shadow-lg">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Join Date</th>
+                    <th>DOB</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable">
+                {% for member in members %}
+                <tr>
+                    <td>{{ member.member_id }}</td>
+                    <td>{{ member.first_name }}</td>
+                    <td>{{ member.last_name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.phone }}</td>
+                    <td>{{ member.address }}</td>
+                    <td>{{ member.join_date }}</td>
+                    <td>{{ member.dob }}</td>
+                    <td>{{ member.status }}</td>
+                    <td>
+                        <!-- Edit and Delete buttons next to each other -->
+                        <a href="{% url 'edit_member' member.member_id %}" class="btn-custom btn-sm">Edit</a>
+                        <a href="{% url 'delete_member' member.member_id %}" class="btn-custom btn-sm" onclick="return confirm('Are you sure you want to delete this member?');">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center">No members found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center mt-4">
+            <!-- Rectangular Add New Member Button -->
+            <a href="{% url 'add_member' %}" class="btn-add-new-member">
+                Add New Member
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchBar').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#resultsTable tr');
+
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            const isActive = rowText.includes("active"); // Check if "active" is part of the row's text
+            const isInactive = rowText.includes("inactive"); // Check if "inactive" is part of the row's text
+
+            if (searchTerm === "active") {
+                // Show rows with active status if "active" is searched
+                row.style.display = isActive || rowText.includes(searchTerm) ? '' : 'none';
+            } else if (searchTerm === "inactive") {
+                // Show rows with inactive status if "inactive" is searched
+                row.style.display = isInactive || rowText.includes(searchTerm) ? '' : 'none';
+            } else {
+                // Show rows matching the general search term
+                row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+            }
+        });
+    });
+</script>
+
+<script>
+    function adjustOverlayHeight() {
+        const overlay = document.querySelector('.overlay');
+        overlay.style.height = `${document.body.scrollHeight}px`;
+    }
+
+    // Adjust overlay height on page load and resize
+    window.onload = adjustOverlayHeight;
+    window.onresize = adjustOverlayHeight;
+</script>
+
+{% endblock %}

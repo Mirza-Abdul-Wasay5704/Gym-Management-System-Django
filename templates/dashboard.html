@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+<!-- Loading the static folder files -->
+{% load static %}
+
+{% block title %}
+Gym Management System - Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="overlay"></div>
+
+<!-- Custom styles for the dashboard -->
+<style>
+    body {
+        background-image: url("{% static 'dashboard_bg_img.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: Arial, sans-serif;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    .dashboard-section {
+        padding: 20px;
+        border-radius: 10px;
+        color: white;
+    }
+
+    /* Flexbox for consistent layout and equal card sizes */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .stats-card {
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        color: white;
+        width: calc(25% - 20px); /* Each card takes up 25% of the row, with gap space */
+        min-height: 150px; /* Fixed minimum height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        box-sizing: border-box;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stats-card h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .stats-card p {
+        font-size: 22px;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    /* Hover effect for the stats cards */
+    .stats-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Title Styling */
+    h1 {
+        font-size: 36px;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+        padding: 20px;
+    }
+
+    .alert-card {
+        background: #ff4d4d;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .no-alert {
+        background: rgba(0, 0, 0, 0.6);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        color: white;
+    }
+</style>
+
+<h1><b>Welcome to the Gym Management System Dashboard</b></h1>
+
+<!-- Quick Stats Overview -->
+<div class="dashboard-section">
+    <div class="row">
+        <div class="stats-card">
+            <h3>Total Members</h3>
+            <p>{{ total_members }}</p>
+        </div>
+        <div class="stats-card">
+            <h3>Active Memberships</h3>
+            <p>{{ active_memberships }}</p>
+        </div>
+        <div class="stats-card">
+            <h3>Revenue (This Month)</h3>
+            <p>${{ revenue_current_month }}</p>
+        </div>
+        <div class="stats-card">
+            <h3>Total Trainers</h3>
+            <p>{{ total_trainers }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="stats-card">
+            <h3>Revenue (This Quarter)</h3>
+            <p>${{ revenue_current_quarter }}</p>
+        </div>
+        <div class="stats-card">
+            <h3>Revenue (This Year)</h3>
+            <p>${{ revenue_current_year }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts and Notifications -->
+<div class="dashboard-section">
+    <h3>Alerts & Notifications</h3>
+    
+    <!-- Expiring Memberships -->
+    {% if expiring_memberships %}
+    <div class="alert-card">
+        <h4>Expiring Memberships (Next 7 Days)</h4>
+        <ul>
+            {% for membership in expiring_memberships %}
+                <li>
+                    {{ membership.member.first_name }} {{ membership.member.last_name }} 
+                    (expires on {{ membership.end_date }})
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="no-alert">
+        <p>No memberships expiring soon.</p>
+    </div>
+    {% endif %}
+
+    <!-- Pending Payments -->
+    {% if pending_payments %}
+    <div class="alert-card">
+        <h4>Pending Payments</h4>
+        <ul>
+            {% for payment in pending_payments %}
+                <li>
+                    {{ payment.membership.member.first_name }} {{ payment.membership.member.last_name }} 
+                    - Amount: ${{ payment.amount }} (Due on {{ payment.billing_date }})
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="no-alert">
+        <p>No pending payments.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
